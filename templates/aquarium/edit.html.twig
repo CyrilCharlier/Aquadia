@@ -1,0 +1,216 @@
+{% extends 'base.html.twig' %}
+
+{% block page %}
+
+<div class="page-header mb-4">
+    <h1 class="page-header-title text-white">
+        Modifier l'aquarium {{ aquarium.name|upper }}
+    </h1>
+</div>
+
+<!-- BEGIN card -->
+<div class="card">
+
+    <!-- BEGIN card-body -->
+    <div class="card-body">
+
+        {{ form_start(form, {
+            'action': path('app_aquarium_edit', {'id':aquarium.id})
+        }) }}
+
+        <div class="row g-4">
+
+            <!-- Nom -->
+            <div class="col-xl-6">
+                <label class="form-label text-white-50">Nom <span class="text-danger">*</span></label>
+                {{ form_widget(form.name, {
+                    'attr': { 'class':'form-control', 'placeholder':'Nom aquarium' }
+                }) }}
+            </div>
+
+            <!-- Volume -->
+            <div class="col-xl-6">
+                <label class="form-label text-white-50">Volume (L) <span class="text-danger">*</span></label>
+                {{ form_widget(form.volume, {
+                    'attr': { 'class':'form-control', 'placeholder':'300' }
+                }) }}
+            </div>
+
+            <!-- Mise en eau -->
+            <div class="col-xl-6">
+                <label class="form-label text-white-50">Date de mise en eau</label>
+                {{ form_widget(form.wateringDate, {
+                    'attr': { 'class':'form-control' }
+                }) }}
+            </div>
+
+            <!-- Température -->
+            <div class="col-xl-6">
+                <label class="form-label text-white-50">Type d'Aquarium</label>
+                {{ form_widget(form.typeAquarium, {
+                    'attr': { 'class':'form-select'}
+                }) }}
+            </div>
+
+            <!-- Température -->
+            <div class="col-xl-6">
+                <label class="form-label text-white-50">Température (°C)</label>
+                {{ form_widget(form.temperature, {
+                    'attr': { 'class':'form-control', 'placeholder':'25' }
+                }) }}
+            </div>
+
+            <!-- Image -->
+            <div class="col-xl-6">
+                <label class="form-label text-white-50">Image</label>
+                {{ form_widget(form.imageFile, {
+                    'attr': { 'class':'form-control' }
+                }) }}
+            </div>
+
+            <!-- Description -->
+            <div class="col-xl-12">
+                <label class="form-label text-white-50">Description</label>
+                {{ form_widget(form.description, {
+                    'attr': {
+                        'class':'form-control',
+                        'rows':3,
+                        'placeholder':'Notes, observations, biotope...'
+                    }
+                }) }}
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-droplet-half me-1"></i> Paramètres de l'eau</h5>
+            </div>
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    {# --- PH --- #}
+                    <div class="col-md-6">
+                        {{ form_label(form.phMin) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-speedometer2"></i></span>
+                            {{ form_widget(form.phMin, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.phMin) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_label(form.phMax) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-speedometer"></i></span>
+                            {{ form_widget(form.phMax, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.phMax) }}
+                    </div>
+
+                    {# --- GH --- #}
+                    <div class="col-md-6">
+                        {{ form_label(form.ghMin) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-beaker"></i></span>
+                            {{ form_widget(form.ghMin, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.ghMin) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_label(form.ghMax) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-beaker"></i></span>
+                            {{ form_widget(form.ghMax, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.ghMax) }}
+                    </div>
+
+                    {# --- KH --- #}
+                    <div class="col-md-6">
+                        {{ form_label(form.khMin) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-moisture"></i></span>
+                            {{ form_widget(form.khMin, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.khMin) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_label(form.khMax) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-moisture"></i></span>
+                            {{ form_widget(form.khMax, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.khMax) }}
+                    </div>
+
+                    {# --- NO2 / NO3 / NHX --- #}
+                    <div class="col-md-4">
+                        {{ form_label(form.no2) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-exclamation-triangle"></i></span>
+                            {{ form_widget(form.no2, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.no2) }}
+                    </div>
+
+                    <div class="col-md-4">
+                        {{ form_label(form.no3) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-exclamation-circle"></i></span>
+                            {{ form_widget(form.no3, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.no3) }}
+                    </div>
+
+                    <div class="col-md-4">
+                        {{ form_label(form.nhx) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-bug"></i></span>
+                            {{ form_widget(form.nhx, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.nhx) }}
+                    </div>
+
+                    {# --- Conductivité --- #}
+                    <div class="col-md-12">
+                        {{ form_label(form.conductiviteMax) }}
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lightning"></i></span>
+                            {{ form_widget(form.conductiviteMax, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_errors(form.conductiviteMax) }}
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-arrow">
+                <div class="card-arrow-top-left"></div>
+                <div class="card-arrow-top-right"></div>
+                <div class="card-arrow-bottom-left"></div>
+                <div class="card-arrow-bottom-right"></div>
+            </div>
+        </div>
+
+
+        <div class="mt-4">
+            <button class="btn btn-warning w-100 fw-bold text-dark">
+                <i class="bi bi-check-circle me-2"></i> Modifier
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+
+    </div>
+    <!-- END card-body -->
+
+    <div class="card-arrow">
+        <div class="card-arrow-top-left"></div>
+        <div class="card-arrow-top-right"></div>
+        <div class="card-arrow-bottom-left"></div>
+        <div class="card-arrow-bottom-right"></div>
+    </div>
+
+</div>
+<!-- END card -->
+
+{% endblock %}

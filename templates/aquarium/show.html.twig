@@ -1,0 +1,206 @@
+{% extends 'base.html.twig' %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+});
+document.addEventListener("DOMContentLoaded", function () {
+
+    const data = {
+        dates: [
+            {% for t in aquarium.tests %}
+                "{{ t.date|date('Y-m-d') }}",
+            {% endfor %}
+        ],
+        ph: [
+            {% for t in aquarium.tests %}
+                {{ t.ph }},
+            {% endfor %}
+        ],
+        gh: [
+            {% for t in aquarium.tests %}
+                {{ t.gh }},
+            {% endfor %}
+        ],
+        kh: [
+            {% for t in aquarium.tests %}
+                {{ t.kh }},
+            {% endfor %}
+        ],
+        no2: [
+            {% for t in aquarium.tests %}
+                {{ t.no2 }},
+            {% endfor %}
+        ],
+        no3: [
+            {% for t in aquarium.tests %}
+                {{ t.no3 }},
+            {% endfor %}
+        ],
+        nhx: [
+            {% for t in aquarium.tests %}
+                {{ t.nhx }},
+            {% endfor %}
+        ],
+        conductivite: [
+            {% for t in aquarium.tests %}
+                {{ t.conductivite }},
+            {% endfor %}
+        ],
+    };
+
+    const ctx = document.getElementById('rapportChart').getContext('2d');
+
+    let chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.dates,
+            datasets: [{
+                label: "pH",
+                data: data.ph,
+                borderWidth: 2,
+                tension: 0.25
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: { color: "#fff" }
+                },
+                x: {
+                    ticks: { color: "#fff" }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: "#fff" }
+                }
+            }
+        }
+    });
+
+    // Sélecteur
+    document.getElementById('rapport-select').addEventListener('change', function () {
+        const key = this.value;
+
+        chart.data.datasets[0].label = key.toUpperCase();
+        chart.data.datasets[0].data = data[key];
+        chart.update();
+    });
+
+});
+</script>
+
+{% endblock %}
+
+{% block stylesheet %}
+<style>
+    .btn-outline-light:hover {
+        background: rgba(0,123,255,0.3) !important;
+        border-color: rgba(0,123,255,0.6) !important;
+        color: #fff !important;
+    }
+
+    #rapportChart {
+        max-height: 420px;
+    }
+</style>
+{% endblock %}
+
+{% block page %}
+
+<div class="page-header mb-4 d-flex align-items-center justify-content-between">
+
+    <div class="d-flex align-items-center gap-3">
+        <h1 class="page-header-title text-white mb-0">
+            {{ aquarium.name }}
+        </h1>
+
+        <a href="{{ path('app_aquarium_edit', {id: aquarium.id}) }}"
+           data-bs-toggle="tooltip"
+           title="Modifier l'aquarium"
+           class="btn btn-sm btn-outline-light d-flex align-items-center shadow-sm"
+           style="border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.05); padding: 4px 8px;">
+            <i class="bi bi-pencil-square fs-5"></i>
+        </a>
+    </div>
+
+    <div class="text-white-50 small text-end">
+        Volume : {{ aquarium.volume }} L •
+        Température : {{ aquarium.temperature ?? '—' }}°C •
+        Mise en eau : {{ aquarium.wateringDate ? aquarium.wateringDate|date('d/m/Y') : '—' }}
+    </div>
+</div>
+
+
+
+<!-- BEGIN card -->
+<div class="card">
+    <div class="card-body">
+
+        <!-- NAVIGATION DES ONGLETS -->
+        <ul class="nav nav-tabs mb-4" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tab-general">Général</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-poissons">Poissons</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-invertebres">Invertébrés</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-plantes">Plantes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-analyses">Analyses</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-planning">Planning</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab-rapport">Rapport</a>
+            </li>
+        </ul>
+
+        <!-- CONTENU DES ONGLETS -->
+        <div class="tab-content">
+
+            {{ include('aquarium/index.pane.general.html.twig', { aquarium: aquarium }) }}
+
+            {{ include('aquarium/index.pane.poisson.html.twig', { aquarium: aquarium }) }}
+
+            {{ include('aquarium/index.pane.invertebre.html.twig', { aquarium: aquarium }) }}
+
+            {{ include('aquarium/index.pane.plante.html.twig', { aquarium: aquarium }) }}
+
+            {{ include('aquarium/index.pane.analyse.html.twig', { aquarium: aquarium }) }}
+
+            <!-- PLANNING -->
+            <div class="tab-pane fade" id="tab-planning">
+                <h4 class="mb-3 text-white">Planning</h4>
+                <p class="text-white-50">Aucune tâche planifiée.</p>
+            </div>
+
+            {{ include('aquarium/index.pane.rapport.html.twig', { aquarium: aquarium }) }}
+
+        </div>
+
+    </div>
+
+    <!-- CARD ARROW -->
+    <div class="card-arrow">
+        <div class="card-arrow-top-left"></div>
+        <div class="card-arrow-top-right"></div>
+        <div class="card-arrow-bottom-left"></div>
+        <div class="card-arrow-bottom-right"></div>
+    </div>
+</div>
+<!-- END card -->
+
+{% endblock %}

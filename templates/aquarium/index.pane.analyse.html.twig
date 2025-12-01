@@ -1,0 +1,82 @@
+{% import 'macros/test.html.twig' as testmacro %}
+
+<div class="tab-pane fade" id="tab-analyses">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="text-white mb-0">Analyses d’eau</h4>
+
+        <a href="{{ path('app_test_new', { id: aquarium.id }) }}"
+           class="btn btn-sm btn-outline-warning">
+            <i class="bi bi-eyedropper me-1"></i> Ajouter une analyse
+        </a>
+    </div>
+
+    {% if aquarium.tests|length == 0 %}
+        <p class="text-white-50">Aucune analyse pour le moment.</p>
+
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">pH</th>
+                        <th class="text-center">GH</th>
+                        <th class="text-center">KH</th>
+                        <th class="text-center">NO₂</th>
+                        <th class="text-center">NO₃</th>
+                        <th class="text-center">NH₄/NH₃</th>
+                        <th class="text-center">Conductivité</th>
+                        <th class="text-center">Commentaire</th>
+                        <th style="width:140px;">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for t in aquarium.tests %}
+                    <tr>
+                        <td class="text-center">{{ t.date ? t.date|date('d/m/Y') : '—' }}</td>
+
+                        {{ testmacro.valueCell(t.ph, aquarium.phMin, aquarium.phMax) }}
+                        {{ testmacro.valueCell(t.gh, aquarium.ghMin, aquarium.ghMax) }}
+                        {{ testmacro.valueCell(t.kh, aquarium.khMin, aquarium.khMax) }}
+                        {{ testmacro.valueCell(t.no2, null, aquarium.no2) }}
+                        {{ testmacro.valueCell(t.no3, null, aquarium.no3) }}
+                        {{ testmacro.valueCell(t.nhx, null, aquarium.nhx) }}
+                        {{ testmacro.valueCell(t.conductivite, null, aquarium.conductiviteMax) }}
+
+                        <td class="text-center">
+                            {% if t.comment %}
+                                <i class="bi bi-chat-left-text text-info"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="{{ t.comment }}">
+                                </i>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{{ path('app_test_edit', { aquarium:aquarium.id, id: t.id }) }}"
+                               class="btn btn-sm btn-outline-warning me-1">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <form method="post"
+                                  action="{{ path('app_test_delete', { aquarium:aquarium.id, id: t.id }) }}"
+                                  class="d-inline-block delete-test-form">
+                                <input type="hidden" name="_token"
+                                       value="{{ csrf_token('delete' ~ t.id) }}">
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>

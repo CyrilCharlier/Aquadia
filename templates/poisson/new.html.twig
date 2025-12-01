@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block page %}
+
+<div class="page-header mb-4">
+    <h1 class="page-header-title text-white">
+        Nouveau poisson — {{ aquarium.name }}
+    </h1>
+    <div class="text-white-50 small">
+        Volume : {{ aquarium.volume }} L •
+        Température : {{ aquarium.temperature ?? '—' }}°C •
+        Mise en eau : {{ aquarium.wateringDate ? aquarium.wateringDate|date('d/m/Y') : '—' }}
+    </div>
+</div>
+
+<!-- BEGIN card -->
+<div class="card">
+    <div class="card-body">
+
+        <h4 class="text-white mb-4">Ajouter un poisson</h4>
+
+        {{ form_start(form) }}
+
+        <div class="row g-4">
+
+            <div class="col-md-3">
+                {{ form_row(form.espece) }}
+            </div>
+
+            <div class="col-md-3">
+                {{ form_row(form.name) }}
+            </div>
+
+            <div class="col-md-3">
+                {{ form_row(form.genre) }}
+            </div>
+
+            <div class="col-md-3">
+                {{ form_row(form.dateAcquisition) }}
+            </div>
+
+            <div class="col-md-12">
+                {{ form_row(form.comment) }}
+            </div>
+        </div>
+
+        <hr class="my-4 opacity-25">
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ path('app_aquarium_show', {id: aquarium.id}) }}" class="btn btn-outline-secondary">
+                Retour à l'aquarium
+            </a>
+
+            <button class="btn btn-primary">
+                Enregistrer le poisson
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+
+    </div>
+
+    <!-- CARD ARROW -->
+    <div class="card-arrow">
+        <div class="card-arrow-top-left"></div>
+        <div class="card-arrow-top-right"></div>
+        <div class="card-arrow-bottom-left"></div>
+        <div class="card-arrow-bottom-right"></div>
+    </div>
+
+</div>
+<!-- END card -->
+
+{% endblock %}

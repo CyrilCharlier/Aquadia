@@ -1,0 +1,118 @@
+			<!-- BEGIN menu -->
+			<div class="menu">
+				<div class="menu-item dropdown dropdown-mobile-full">
+					<a href="#" data-bs-toggle="dropdown" data-bs-display="static" class="menu-link">
+						<div class="menu-icon"><i class="bi bi-grid-3x3-gap nav-icon"></i></div>
+					</a>
+					<div class="dropdown-menu fade dropdown-menu-end w-300px text-center p-0 mt-1">
+						<div class="row row-grid gx-0">
+							{% for aquarium in app.user.aquariums %}
+                            <div class="col-4">
+								<a href="{{ path('app_aquarium_show', {id:aquarium.id}) }}" class="dropdown-item text-decoration-none p-3 bg-none">
+									<div><i class="bi bi-droplet h2 opacity-5 d-block my-1"></i></div>
+									<div class="fw-500 fs-10px text-inverse">{{ aquarium.name|upper }}</div>
+								</a>
+							</div>
+                            {% endfor %}
+							<div class="col-4">
+								<button class="dropdown-item text-decoration-none p-3 bg-none" data-bs-toggle="modal" data-bs-target="#modalFormAquarium">
+									<div><i class="bi bi-plus h2 opacity-5 d-block my-1"></i></div>
+									<div class="fw-500 fs-10px text-inverse">CREER</div>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="menu-item dropdown dropdown-mobile-full">
+					<a href="#" data-bs-toggle="dropdown" data-bs-display="static" class="menu-link">
+						<div class="menu-icon"><i class="bi bi-bell nav-icon"></i></div>
+						<div class="menu-badge bg-theme"></div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end mt-1 w-300px fs-11px pt-1">
+						{#<h6 class="dropdown-header fs-10px mb-1">NOTIFICATIONS</h6>
+						<div class="dropdown-divider mt-1"></div>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px">
+								<i class="bi bi-bag text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">NEW ORDER RECEIVED ($1,299)</div>
+								<div class="small text-inverse text-opacity-50">JUST NOW</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-person-circle text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">3 NEW ACCOUNT CREATED</div>
+								<div class="small text-inverse text-opacity-50">2 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-gear text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">SETUP COMPLETED</div>
+								<div class="small text-inverse text-opacity-50">3 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-grid text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">WIDGET INSTALLATION DONE</div>
+								<div class="small text-inverse text-opacity-50">5 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-credit-card text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">PAYMENT METHOD ENABLED</div>
+								<div class="small text-inverse text-opacity-50">10 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<hr class="my-0">
+						<div class="py-10px mb-n2 text-center">
+							<a href="#" class="text-decoration-none fw-bold">SEE ALL</a>
+						</div>#}
+					</div>
+				</div>
+				<div class="menu-item dropdown dropdown-mobile-full">
+					<a href="#" data-bs-toggle="dropdown" data-bs-display="static" class="menu-link">
+						<div class="menu-img online">
+							<img src="{{ asset('assets/img/user/profile.png') }}" alt="Profile" height="60">
+						</div>
+						<div class="menu-text d-sm-block d-none w-170px">{{ app.user.email }}</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-lg-3 fs-11px mt-1">
+						{#<a class="dropdown-item d-flex align-items-center" href="profile.html">PROFILE <i class="bi bi-person-circle ms-auto text-theme fs-16px my-n1"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="email_inbox.html">INBOX <i class="bi bi-envelope ms-auto text-theme fs-16px my-n1"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="calendar.html">CALENDAR <i class="bi bi-calendar ms-auto text-theme fs-16px my-n1"></i></a>
+						#}
+                        <a class="dropdown-item d-flex align-items-center" href="{{ path('app_2fa_enable') }}">ACTIVER 2FA <i class="bi bi-gear ms-auto text-theme fs-16px my-n1"></i></a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item d-flex align-items-center" href="{{ path('app_logout') }}">SE DECONNECTER <i class="bi bi-toggle-off ms-auto text-theme fs-16px my-n1"></i></a>
+					</div>
+				</div>
+			</div>
+			<!-- END menu -->

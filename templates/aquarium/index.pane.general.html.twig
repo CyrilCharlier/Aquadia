@@ -1,0 +1,127 @@
+<!-- GÉNÉRAL -->
+<div class="tab-pane fade show active" id="tab-general">
+    <h4 class="mb-4 text-white">Informations générales</h4>
+
+    <div class="row align-items-start">
+
+        <!-- COLONNE GAUCHE : IMAGE + INFOS -->
+        <div class="col-lg-5 mb-4 mb-lg-0 text-center">
+
+            <div class="position-relative d-inline-block" style="overflow: hidden; border-radius: 8px;">
+
+                <!-- IMAGE -->
+                <img
+                    src="{% if aquarium.image %}
+                        {{ asset('uploads/aquariums/' ~ aquarium.image) }}
+                    {% else %}
+                        {{ asset('assets/img/cover.jpg') }}
+                    {% endif %}"
+                    alt="Image aquarium"
+                    class="img-fluid"
+                    style="max-height: 300px; object-fit: cover; opacity: 0.95;"
+                >
+
+                <!-- RUBAN -->
+                <div style="
+                    position: absolute;
+                    top: 12px;
+                    right: -42px;
+                    background: rgb(255,159,12);
+                    color: #000;
+                    font-weight: 600;
+                    padding: 6px 50px;
+                    transform: rotate(45deg);
+                    box-shadow: 0 0 12px rgba(0,0,0,0.35);
+                    border: 1px solid rgba(255,255,255,0.25);
+                    text-shadow: 0 0 2px rgba(255,255,255,0.3);
+                ">
+                    {{ aquarium.name }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- COLONNE DROITE : INFOS GÉNÉRALES + PARAMÈTRES DE L'EAU -->
+        <div class="col-lg-7 d-flex">
+
+            <!-- PARAMÈTRES DE L'EAU -->
+            <div class="flex-fill pe-4 w-50">
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <p class="text-white-50 small mb-0">Mise en eau</p>
+                        <p class="text-white fw-semibold fs-5">{{ aquarium.wateringDate ? aquarium.wateringDate|date('d/m/Y') : '—' }}</p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">Volume</p>
+                        <p class="text-white fw-semibold fs-5 mb-0">{{ aquarium.volume }} L</p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">Température</p>
+                        <p class="text-white fw-semibold fs-5 mb-0">{{ aquarium.temperature ?? '—' }} °C</p>
+                    </div>
+                </div>
+
+                <hr class="opacity-25 my-4">
+                <h5 class="text-white mb-3">Paramètres de l'eau cibles</h5>
+
+                <div class="row g-3">
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">pH</p>
+                        <p class="text-white fw-semibold fs-6">
+                            {{ aquarium.phMin ?? '—' }} - {{ aquarium.phMax ?? '—' }}
+                        </p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">GH (°d)</p>
+                        <p class="text-white fw-semibold fs-6">
+                            {{ aquarium.ghMin ?? '—' }} - {{ aquarium.ghMax ?? '—' }}
+                        </p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">KH (°d)</p>
+                        <p class="text-white fw-semibold fs-6">
+                            {{ aquarium.khMin ?? '—' }} - {{ aquarium.khMax ?? '—' }}
+                        </p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">NO₂ (mg/L max)</p>
+                        <p class="text-white fw-semibold fs-6">{{ aquarium.no2 ?? '—' }}</p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">NO₃ (mg/L max)</p>
+                        <p class="text-white fw-semibold fs-6">{{ aquarium.no3 ?? '—' }}</p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">NH₄/NH₃ (mg/L max)</p>
+                        <p class="text-white fw-semibold fs-6">{{ aquarium.nhx ?? '—' }}</p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="text-white-50 small mb-1">Conductivité (µS/cm max)</p>
+                        <p class="text-white fw-semibold fs-6">{{ aquarium.conductiviteMax ?? '—' }}</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- INFOS GÉNÉRALES -->
+            <div class="flex-fill ps-4 w-50 border-start border-white-25">
+
+                <p class="text-white-50">{{ aquarium.description ? aquarium.description|nl2br : lorem(2)|join('<p>','</p>')|raw }}</p>
+
+            </div>
+        </div>
+
+    </div>
+</div>

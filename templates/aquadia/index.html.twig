@@ -1,0 +1,225 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheet %}
+<style>
+    .aquarium-card {
+        position: relative;
+        background: rgba(20,35,55,0.65);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        backdrop-filter: blur(6px);
+        overflow: hidden;
+        transition: 0.25s ease;
+    }
+    .aquarium-card:hover {
+        border-color: #00aaff55;
+        transform: translateY(-3px);
+    }
+
+    .aquarium-img {
+        height: 170px;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.75);
+    }
+
+    .aquarium-info-bar {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 8px 14px;
+        background: rgba(10, 25, 45, 0.75);
+        backdrop-filter: blur(4px);
+        border-top: 1px solid rgba(0, 170, 255, 0.3); /* petit liseré lumineux HUD */
+        font-size: 0.82rem;
+        color: #e6f4ff; /* texte plus clair */
+        display: flex;
+        justify-content: space-between;
+        letter-spacing: 0.5px;
+    }
+
+    .aquarium-footer {
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding-top: 12px;
+        margin-top: 10px;
+    }
+
+    /* Overlay qui apparaît au survol */
+    .aquarium-img-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .aquarium-hover-eye {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+        transition: 0.25s ease-in-out;
+        color: #e6f4ff;
+        font-size: 3rem;
+        text-shadow: 0 0 10px rgba(0,170,255,0.8);
+        pointer-events: none; /* clic passe à travers */
+    }
+
+    .aquarium-img-container:hover .aquarium-hover-eye {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .aquarium-img-container:hover .aquarium-img {
+        filter: brightness(0.4); /* effet visuel pour mettre l'œil en valeur */
+    }
+
+    .add-aquarium-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px dashed rgba(255, 255, 255, 0.15);
+        transition: all .2s ease-in-out;
+    }
+
+    .add-aquarium-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.4);
+        transform: scale(1.03);
+    }
+
+    /* Ruban type aquarium */
+    .aquarium-ribbon {
+        position: absolute;
+        top: 12px;
+        right: -40px;
+        width: 150px;
+        background: linear-gradient(to right, #0d6efd, #0b5ed7); /* bleu par défaut */
+        color: white;
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 5px 0;
+        transform: rotate(45deg);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.35);
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    /* Option: couleurs selon type */
+    .aquarium-card[data-type="EAU_DOUCE"] .aquarium-ribbon {
+        background: linear-gradient(to right, #28a745, #1e8a37);
+    }
+
+    .aquarium-card[data-type="MARIN"] .aquarium-ribbon {
+        background: linear-gradient(to right, #0dcaf0, #0aa2c0);
+    }
+
+</style>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el))
+    });
+</script>
+{% endblock %}
+
+{% block page %}
+<div class="row">
+    {% for aquarium in app.user.aquariums %}
+    <div class="col-xl-4 col-lg-6 mb-4">
+        <div class="aquarium-card text-white p-3 position-relative"
+     data-type="{{ aquarium.typeAquarium.value }}">
+            {% set typeLabel = aquarium.typeAquarium.value == 'marin'
+                ? 'Marin'
+                : 'Eau douce'
+            %}
+
+            <div class="aquarium-ribbon">
+                {{ typeLabel }}
+            </div>
+
+            <!-- Titre -->
+            <h5 class="fw-bolder text-uppercase mb-2">
+                {{ aquarium.name }}
+            </h5>
+
+            <!-- Image -->
+            <a href="{{ path('app_aquarium_show', {id: aquarium.id}) }}" class="d-block position-relative">
+
+                <div class="aquarium-img-container rounded">
+
+                    <div class="aquarium-img rounded"
+                        style="background-image:url(
+                            {% if aquarium.image %}
+                                '{{ asset('uploads/aquariums/' ~ aquarium.image) }}'
+                            {% else %}
+                                '{{ asset('assets/img/cover.jpg') }}'
+                            {% endif %}
+                        );">
+                    </div>
+
+                    <!-- Icône œil au survol -->
+                    <i class="bi bi-eye aquarium-hover-eye"></i>
+                </div>
+
+                <div class="aquarium-info-bar">
+                    <span>{{ aquarium.volume }} L</span>
+                    <span>{{ aquarium.temperature }}°C</span>
+                    <span>{{ aquarium.wateringDate|date('d/m/Y') }}</span>
+                </div>
+
+            </a>
+
+            <!-- Boutons -->
+            <div class="aquarium-footer d-flex justify-content-between align-items-center mt-3">
+                <!-- Bouton Modifier -->
+                <a href="{{ path('app_aquarium_edit', {id:aquarium.id}) }}"
+                    class="btn btn-sm btn-outline-info"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Modifier cet aquarium">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+
+                <!-- Bouton Analyse -->
+                <a href="{{ path('app_test_new', {id:aquarium.id}) }}"
+                class="btn btn-sm btn-outline-warning"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Ajouter une analyse">
+                    <i class="bi bi-eyedropper"></i>
+                </a>
+
+                <!-- Bouton Supprimer -->
+                <form method="post"
+                    action="{{ path('app_aquarium_delete', {id: aquarium.id}) }}"
+                    style="display:inline-block;"
+                    onsubmit="return confirm('Supprimer cet aquarium ? Cette action est irréversible.');">
+
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ aquarium.id) }}">
+
+                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer l’aquarium">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+    <div class="col-xl-4 col-lg-6 mb-4">
+        <div class="aquarium-card add-aquarium-card text-white p-3 d-flex align-items-center justify-content-center"
+            data-bs-toggle="modal" data-bs-target="#modalFormAquarium"
+            style="cursor: pointer;">
+
+            <div class="text-center">
+                <i class="bi bi-plus-circle display-4 mb-2"></i>
+                <h5 class="fw-bold">Ajouter un aquarium</h5>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+	<meta charset="utf-8">
+	<title>Aquadia | Connexion</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet">
+	<!-- ================== END core-css ================== -->
+
+</head>
+<body class='pace-top theme-warning'>
+	<!-- BEGIN #app -->
+	<div id="app" class="app app-full-height app-without-header">
+		<!-- BEGIN login -->
+		<div class="login">
+			<!-- BEGIN login-content -->
+			<div class="login-content">
+				{% if authenticationError %}
+                <div class="alert alert-danger text-center py-2 mb-3">
+                    {{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}
+                </div>
+                {% endif %}
+
+                {% if availableTwoFactorProviders|length > 1 %}
+                    <p class="text-center mb-3 text-slate-300 small">{{ "choose_provider"|trans({}, 'SchebTwoFactorBundle') }} :</p>
+                    <div class="text-center mb-3">
+                        {% for provider in availableTwoFactorProviders %}
+                            <a href="{{ path("2fa_login", {"preferProvider": provider}) }}" class="btn btn-sm btn-outline-primary me-2">{{ provider }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}" method="post">
+                    <label for="_auth_code" class="form-label small">{{ "auth_code"|trans({}, 'SchebTwoFactorBundle') }} :</label>
+                    <input
+                        id="_auth_code"
+                        type="text"
+                        name="{{ authCodeParameterName }}"
+                        class="form-control form-control-lg mb-3"
+                        placeholder="123 456"
+                        autocomplete="one-time-code"
+                        autofocus
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                    />
+
+                    {% if displayTrustedOption %}
+                        <div class="form-check mb-3">
+                            <input id="_trusted" type="checkbox" name="{{ trustedParameterName }}" class="form-check-input" />
+                            <label for="_trusted" class="form-check-label text-slate-300 small">
+                                {{ "trusted"|trans({}, 'SchebTwoFactorBundle') }}
+                            </label>
+                        </div>
+                    {% endif %}
+
+                    {% if isCsrfProtectionEnabled %}
+                        <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">{{ "login"|trans({}, 'SchebTwoFactorBundle') }}</button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="{{ logoutPath }}" class="text-danger small">{{ "cancel"|trans({}, 'SchebTwoFactorBundle') }}</a>
+                </div>
+            </div>
+			<!-- END login-content -->
+		</div>
+		<!-- END login -->
+
+		<!-- BEGIN btn-scroll-top -->
+		<a href="#" data-toggle="scroll-to-top" class="btn-scroll-top fade"><i class="fa fa-arrow-up"></i></a>
+		<!-- END btn-scroll-top -->
+	</div>
+	<!-- END #app -->
+
+	<!-- ================== BEGIN core-js ================== -->
+	<script src="{{ asset('assets/js/vendor.min.js') }}"></script>
+	<script src="{{ asset('assets/js/app.min.js') }}"></script>
+	<!-- ================== END core-js ================== -->
+
+
+</body>
+</html>

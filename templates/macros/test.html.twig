@@ -1,0 +1,26 @@
+{% macro valueCell(value, min, max) %}
+    {% if value is not null %}
+        {% set outOfRange = false %}
+
+        {# Cas 1 : plage min–max (les deux existent) #}
+        {% if min is not null and max is not null %}
+            {% set outOfRange = value < min or value > max %}
+        {% endif %}
+
+        {# Cas 2 : seulement une valeur max #}
+        {% if min is null and max is not null %}
+            {% set outOfRange = value > max %}
+        {% endif %}
+
+        {# Cas 3 : seulement une valeur min (rare mais prévu) #}
+        {% if min is not null and max is null %}
+            {% set outOfRange = value < min %}
+        {% endif %}
+
+        <td class="text-center{{ outOfRange ? ' text-danger fw-bold' : '' }}">
+            {{ value }}
+        </td>
+    {% else %}
+        <td>—</td>
+    {% endif %}
+{% endmacro %}
