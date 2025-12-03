@@ -81,8 +81,19 @@ final class AquariumController extends AbstractController
         if ($aquarium->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à cet aquarium.');
         }
+
+        $limits = [
+            'ph' => ['min' => $aquarium->getPhMin(), 'max' => $aquarium->getPhMax()],
+            'gh' => ['min' => $aquarium->getGhMin(), 'max' => $aquarium->getGhMax()],
+            'kh' => ['min' => $aquarium->getKhMin(), 'max' => $aquarium->getKhMax()],
+            'no2'=> ['min' => $aquarium->getNo2(),   'max' => null],
+            'no3'=> ['min' => $aquarium->getNo3(),   'max' => null],
+            'nhx'=> ['min' => $aquarium->getNhx(),   'max' => null],
+            'conductivite' => ['min' => null,        'max'=> $aquarium->getConductiviteMax()],
+        ];
         return $this->render('aquarium/show.html.twig', [
-            'aquarium' => $aquarium
+            'aquarium' => $aquarium,
+            'limits' => $limits
         ]);
     }
 

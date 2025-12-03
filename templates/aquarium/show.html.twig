@@ -2,6 +2,14 @@
 
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2"></script>
+<script src="{{ asset('assets/plugins/moment/moment.js') }}"></script>
+<script src="{{ asset('assets/plugins/@fullcalendar/core/index.global.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/@fullcalendar/daygrid/index.global.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/@fullcalendar/timegrid/index.global.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/@fullcalendar/list/index.global.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/@fullcalendar/bootstrap/index.global.min.js') }}"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -9,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 document.addEventListener("DOMContentLoaded", function () {
 
+    // Données des tests
     const data = {
         dates: [
             {% for t in aquarium.tests %}
@@ -51,51 +60,146 @@ document.addEventListener("DOMContentLoaded", function () {
             {% endfor %}
         ],
     };
+    var calendar;
 
-    const ctx = document.getElementById('rapportChart').getContext('2d');
+    // Limites envoyées par le contrôleur (phMin, phMax, etc.)
+    // Exemple côté contrôleur : 'limits' => ['ph' => ['min' => $aquarium->getPhMin(), 'max' => $aquarium->getPhMax()], ...]
+    const limits = {{ limits|json_encode|raw }};
+    if(document.getElementById('rapportChart')) {
+        const ctx = document.getElementById('rapportChart').getContext('2d');
 
-    let chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: data.dates,
-            datasets: [{
-                label: "pH",
-                data: data.ph,
-                borderWidth: 2,
-                tension: 0.25
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    ticks: { color: "#fff" }
-                },
-                x: {
-                    ticks: { color: "#fff" }
-                }
+        let chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.dates,
+                datasets: [{
+                    label: "pH",
+                    data: data.ph,
+                    borderWidth: 2,
+                    tension: 0.25,
+                    borderColor: '#4bc0c0',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    pointRadius: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4bc0c0'
+                }]
             },
-            plugins: {
-                legend: {
-                    labels: { color: "#fff" }
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: { color: "#fff" }
+                    },
+                    x: {
+                        ticks: { color: "#fff" }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: "#fff" }
+                    },
+                    annotation: {
+                        annotations: {} // rempli dynamiquement selon le paramètre choisi
+                    }
                 }
             }
+        });
+
+        // Fonction utilitaire pour mettre à jour les zones selon le paramètre (key)
+        function updateAnnotationsFor(key) {
+            // Réinitialise les annotations
+            chart.options.plugins.annotation.annotations = {};
+
+            // Si on a des limites configurées pour ce paramètre
+            if (limits[key] && limits[key].min !== null && limits[key].max !== null) {
+                chart.options.plugins.annotation.annotations.zoneVerte = {
+                    type: 'box',
+                    yMin: limits[key].min,
+                    yMax: limits[key].max,
+                    backgroundColor: 'rgba(0, 255, 0, 0.12)',
+                    borderColor: 'rgba(0, 255, 0, 0.5)',
+                    borderWidth: 1
+                };
+            }
         }
-    });
 
-    // Sélecteur
-    document.getElementById('rapport-select').addEventListener('change', function () {
-        const key = this.value;
-
-        chart.data.datasets[0].label = key.toUpperCase();
-        chart.data.datasets[0].data = data[key];
+        // Initialisation des annotations pour le pH au chargement
+        updateAnnotationsFor('ph');
         chart.update();
+
+        // Événement sur le sélecteur de paramètre
+        document.getElementById('rapport-select').addEventListener('change', function () {
+            const key = this.value; // ph, gh, kh, no2, no3, nhx, conductivite...
+
+            // Mise à jour du dataset
+            chart.data.datasets[0].label = key.toUpperCase();
+            chart.data.datasets[0].data = data[key];
+
+            // Mise à jour des zones en fonction des limites du paramètre choisi
+            updateAnnotationsFor(key);
+
+            chart.update();
+        });
+    }
+    function functionhandleRenderFullcalendar () {
+        // fullcalendar
+        var d = new Date();
+        var month = d.getMonth() + 1;
+            month = (month < 10) ? '0' + month : month;
+        var year = d.getFullYear();
+        var day = d.getDate();
+        var today = moment().startOf('day');
+        var calendarElm = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarElm, {
+            headerToolbar: {
+                left: 'dayGridMonth,timeGridWeek,timeGridDay',
+                center: 'title',
+                right: 'prev,next today'
+            },
+            buttonText: {
+                today:    'Aujourd\'hui',
+                    month:    'Mois',
+                    week:     'Semaine',
+                    day:      'Jour'
+            },
+            initialView: 'dayGridMonth',
+            editable: true,
+            droppable: true,
+            themeSystem: 'bootstrap',
+            views: {
+                timeGrid: {
+                    eventLimit: 6 // adjust to 6 only for timeGridWeek/timeGridDay
+                }
+            },
+            events: [{% if aquarium.tests|length != 0 %}{% for t in aquarium.tests %}{
+                title: 'Analyse',
+                start: {{ t.date|date('Y') }} + '-' + {{ t.date|date('m') }} + '-' + {{ t.date|date('d') }},
+                color: app.color.blue,
+                extendedProps: {
+                    description: 'Ph: {{t.ph}}, Gh: {{t.gh}}',
+                }
+            },{% endfor %}{% endif %}],
+            eventContent: function(arg) {
+                    const desc = arg.event.extendedProps.description || '';
+                    return {
+                        html: '<div>' + arg.event.title + ' :<br><small>' + desc + '</small></div>'
+                    };
+                }
+        });
+
+        calendar.render();
+    };
+    const planningTab = document.querySelector('a[href="#tab-planning"][data-bs-toggle="tab"]');
+        planningTab.addEventListener('shown.bs.tab', function (event) {
+        console.log('Onglet Planning affiché');
+        functionhandleRenderFullcalendar();
     });
+
 
 });
-</script>
 
+</script>
 {% endblock %}
 
 {% block stylesheet %}
@@ -181,11 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             {{ include('aquarium/index.pane.analyse.html.twig', { aquarium: aquarium }) }}
 
-            <!-- PLANNING -->
-            <div class="tab-pane fade" id="tab-planning">
-                <h4 class="mb-3 text-white">Planning</h4>
-                <p class="text-white-50">Aucune tâche planifiée.</p>
-            </div>
+            {{ include('aquarium/index.pane.planning.html.twig', { aquarium: aquarium }) }}
 
             {{ include('aquarium/index.pane.rapport.html.twig', { aquarium: aquarium }) }}
 
