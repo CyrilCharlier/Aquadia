@@ -27,7 +27,7 @@ class Invertebre
     #[ORM\JoinColumn(nullable: false)]
     private ?EspeceInvertebre $espece = null;
 
-    #[ORM\ManyToOne(inversedBy: 'plantes')]
+    #[ORM\ManyToOne(inversedBy: 'invertebres')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Aquarium $aquarium = null;
 

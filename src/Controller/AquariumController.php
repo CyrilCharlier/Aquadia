@@ -3,15 +3,24 @@
 namespace App\Controller;
 
 use App\Entity\Aquarium;
+use App\Entity\User;
 use App\Form\AquariumType;
+use App\Ui\Color\UserEventColors;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 final class AquariumController extends AbstractController
 {
+    private function getUserApp(): User
+    {
+        return $this->getUser();
+    }
+
     #[Route('/aquarium/new', name: 'app_aquarium_new', methods: ['POST', 'GET'])]
     public function new(
         Request $request,
@@ -98,7 +107,11 @@ final class AquariumController extends AbstractController
     }
 
     #[Route('/aquarium/{id}', name: 'app_aquarium_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
-    public function delete(Request $request, Aquarium $aquarium, EntityManagerInterface $em): Response
+    public function delete(
+        Request $request,
+        Aquarium $aquarium,
+        EntityManagerInterface $em
+        ): Response
     {
         // Vérifie que l'aquarium appartient bien au user connecté
         if ($aquarium->getUser() !== $this->getUser()) {
@@ -112,5 +125,117 @@ final class AquariumController extends AbstractController
         }
 
         return $this->redirectToRoute('app_aquadia');
+    }
+
+    #[Route('/aquarium/{id}/evenements', name: 'app_aquarium_evenements', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function getEvents(Aquarium $aquarium, Request $request): JsonResponse
+    {
+        // Vérifier que l'aquarium appartient à l'utilisateur connecté
+        if ($aquarium->getUser() !== $this->getUser()) {
+            return new JsonResponse([], 403);
+        }
+
+        $events = [];
+
+        // Récupérer les paramètres start et end de FullCalendar
+        $startParam = $request->query->get('start');
+        $endParam = $request->query->get('end');
+        // Convertir en DateTimeImmutable
+        $start = $startParam ? new DateTimeImmutable($startParam) : null;
+        $end = $endParam ? new DateTimeImmutable($endParam) : null;
+
+        // ===== TESTS (analyses) =====
+        foreach ($aquarium->getTests() as $test) {
+            $testDate = $test->getDate();
+
+            // Filtrer si start/end sont fournis
+            if ($start && $testDate < $start) {
+                continue;
+            }
+            if ($end && $testDate > $end) {
+                continue;
+            }
+
+            $events[] = [
+                'title' => 'Analyse',
+                'start' => $test->getDate()->format('Y-m-d'),
+                'color' => ($this->getUserApp()?->getUiPreferences()?->getColorEventTest() ?? UserEventColors::EVENT_TEST),
+                'extendedProps' => [
+                    'description' => $test->getEventDescription(),
+                    'type' => 'test',
+                ],
+            ];
+        }
+
+        // ===== ÉVÉNEMENTS =====
+        foreach ($aquarium->getEvenements() as $evenement) {
+            $eventDate = $evenement->getDate();
+
+            // Filtrer si start/end sont fournis
+            if ($start && $eventDate < $start) {
+                continue;
+            }
+            if ($end && $eventDate > $end) {
+                continue;
+            }
+
+            $events[] = [
+                'title' => $evenement->getCategorie()->getName(),
+                'start' => $evenement->getDate()->format('Y-m-d'),
+                'color' => ($this->getUserApp()?->getUiPreferences()?->getColorDefault() ?? UserEventColors::DEFAULT_EVENT),
+                'extendedProps' => [
+                    'description' => $evenement->getDescription() ?? '',
+                    'type' => 'event',
+                ],
+            ];
+        }
+
+        // ===== Plantes =====
+        foreach ($aquarium->getPlantes() as $plante) {
+            $date = $plante->getDateAjout();
+
+            // Filtrer si start/end sont fournis
+            if ($start && $date < $start) {
+                continue;
+            }
+            if ($end && $date > $end) {
+                continue;
+            }
+
+            $events[] = [
+                'title' => 'Ajout Plante',
+                'start' => $plante->getDateAjout()->format('Y-m-d'),
+                'color' => ($this->getUserApp()?->getUiPreferences()?->getColorAddPlant() ?? UserEventColors::ADD_PLANT),
+                'extendedProps' => [
+                    'description' => $plante->getName() . '(' . $plante->getEspece()->getName() . ')',
+                    'type' => 'plante',
+                ],
+            ];
+        }
+
+        // ===== Poissons =====
+        foreach ($aquarium->getPoissons() as $poisson) {
+            $date = $poisson->getDateAcquisition();
+
+            // Filtrer si start/end sont fournis
+            if ($start && $date < $start) {
+                continue;
+            }
+            if ($end && $date > $end) {
+                continue;
+            }
+
+            $events[] = [
+                'title' => 'Ajout Poisson',
+                'start' => $poisson->getDateAcquisition()->format('Y-m-d'),
+                'color' => ($this->getUserApp()?->getUiPreferences()?->getColorAddFish() ?? UserEventColors::ADD_FISH),
+                'extendedProps' => [
+                    'description' => $poisson->getName() . '(' . $poisson->getEspece()->getName() . ')',
+                    'type' => 'poisson',
+                ],
+            ];
+        }
+
+        return new JsonResponse($events);
     }
 }

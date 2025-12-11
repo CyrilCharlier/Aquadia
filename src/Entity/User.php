@@ -51,9 +51,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(length: 180)]
     private ?string $totpSecret;
 
+    /**
+     * @var Collection<int, EvenementCategorie>
+     */
+    #[ORM\OneToMany(targetEntity: EvenementCategorie::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $evenementCategories;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?UserUiPreferences $uiPreferences = null;
+
     public function __construct()
     {
         $this->aquariums = new ArrayCollection();
+        $this->evenementCategories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,5 +216,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         $period = 20;
         $digits = 6;
         return null !== $this->totpSecret ? new TotpConfiguration($this->totpSecret, TotpConfiguration::ALGORITHM_SHA1, $period, $digits) : null;
+    }
+
+    /**
+     * @return Collection<int, EvenementCategorie>
+     */
+    public function getEvenementCategories(): Collection
+    {
+        return $this->evenementCategories;
+    }
+
+    public function addEvenementCategory(EvenementCategorie $evenementCategory): static
+    {
+        if (!$this->evenementCategories->contains($evenementCategory)) {
+            $this->evenementCategories->add($evenementCategory);
+            $evenementCategory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvenementCategory(EvenementCategorie $evenementCategory): static
+    {
+        if ($this->evenementCategories->removeElement($evenementCategory)) {
+            // set the owning side to null (unless already changed)
+            if ($evenementCategory->getUser() === $this) {
+                $evenementCategory->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUiPreferences(): ?UserUiPreferences
+    {
+        return $this->uiPreferences;
+    }
+
+    public function setUiPreferences(UserUiPreferences $uiPreferences): static
+    {
+        // set the owning side of the relation if necessary
+        if ($uiPreferences->getUser() !== $this) {
+            $uiPreferences->setUser($this);
+        }
+
+        $this->uiPreferences = $uiPreferences;
+
+        return $this;
     }
 }

@@ -98,12 +98,19 @@ class Aquarium
     #[ORM\OneToMany(targetEntity: Invertebre::class, mappedBy: 'aquarium')]
     private Collection $invertebres;
 
+    /**
+     * @var Collection<int, Evenement>
+     */
+    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'aquarium', orphanRemoval: true)]
+    private Collection $evenements;
+
     public function __construct()
     {
         $this->tests = new ArrayCollection();
         $this->poissons = new ArrayCollection();
         $this->plantes = new ArrayCollection();
         $this->invertebres = new ArrayCollection();
+        $this->evenements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -462,6 +469,36 @@ class Aquarium
             // set the owning side to null (unless already changed)
             if ($invertebre->getAquarium() === $this) {
                 $invertebre->setAquarium(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenements(): Collection
+    {
+        return $this->evenements;
+    }
+
+    public function addEvenement(Evenement $evenement): static
+    {
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements->add($evenement);
+            $evenement->setAquarium($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): static
+    {
+        if ($this->evenements->removeElement($evenement)) {
+            // set the owning side to null (unless already changed)
+            if ($evenement->getAquarium() === $this) {
+                $evenement->setAquarium(null);
             }
         }
 

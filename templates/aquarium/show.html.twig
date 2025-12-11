@@ -4,11 +4,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2"></script>
 <script src="{{ asset('assets/plugins/moment/moment.js') }}"></script>
-<script src="{{ asset('assets/plugins/@fullcalendar/core/index.global.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/@fullcalendar/daygrid/index.global.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/@fullcalendar/timegrid/index.global.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/@fullcalendar/list/index.global.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/@fullcalendar/bootstrap/index.global.min.js') }}"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
+<script src="https://www.jsdelivr.com/package/npm/@fullcalendar/bootstrap5?version=6.1.19"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.19/locales-all.global.min.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -152,51 +150,45 @@ document.addEventListener("DOMContentLoaded", function () {
         var today = moment().startOf('day');
         var calendarElm = document.getElementById('calendar');
         calendar = new FullCalendar.Calendar(calendarElm, {
+            locale: 'fr',
             headerToolbar: {
                 left: 'dayGridMonth,timeGridWeek,timeGridDay',
                 center: 'title',
                 right: 'prev,next today'
             },
-            buttonText: {
-                today:    'Aujourd\'hui',
-                    month:    'Mois',
-                    week:     'Semaine',
-                    day:      'Jour'
-            },
             initialView: 'dayGridMonth',
-            editable: true,
-            droppable: true,
+            editable: false,
+            droppable: false,
             themeSystem: 'bootstrap',
             views: {
-                timeGrid: {
-                    eventLimit: 6 // adjust to 6 only for timeGridWeek/timeGridDay
+                listDay: { buttonText: 'list day' },
+                listWeek: { buttonText: 'list week' },
+                listMonth: { buttonText: 'list month' },
+            },
+            events: {
+                url: '{{ path('app_aquarium_evenements', {id: aquarium.id}) }}',
+                failure: function() {
+                    console.error('Erreur lors du chargement des événements');
                 }
             },
-            events: [{% if aquarium.tests|length != 0 %}{% for t in aquarium.tests %}{
-                title: 'Analyse',
-                start: {{ t.date|date('Y') }} + '-' + {{ t.date|date('m') }} + '-' + {{ t.date|date('d') }},
-                color: app.color.blue,
-                extendedProps: {
-                    description: 'Ph: {{t.ph}}, Gh: {{t.gh}}',
-                }
-            },{% endfor %}{% endif %}],
             eventContent: function(arg) {
-                    const desc = arg.event.extendedProps.description || '';
-                    return {
-                        html: '<div>' + arg.event.title + ' :<br><small>' + desc + '</small></div>'
-                    };
-                }
+                const desc = arg.event.extendedProps.description || '';
+                return {
+                    html: '<div>' + arg.event.title + '<br><small>' + desc + '</small></div>'
+                };
+            },
+            datesSet: function(info) {
+                // Recharge les événements quand on change de vue ou de plage de dates
+                calendar.refetchEvents();
+            }
         });
 
         calendar.render();
     };
     const planningTab = document.querySelector('a[href="#tab-planning"][data-bs-toggle="tab"]');
-        planningTab.addEventListener('shown.bs.tab', function (event) {
-        console.log('Onglet Planning affiché');
+    planningTab.addEventListener('shown.bs.tab', function (event) {
         functionhandleRenderFullcalendar();
     });
-
-
 });
 
 </script>

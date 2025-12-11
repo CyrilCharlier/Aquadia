@@ -130,8 +130,8 @@
         <div class="aquarium-card text-white p-3 position-relative"
      data-type="{{ aquarium.typeAquarium.value }}">
             {% set typeLabel = aquarium.typeAquarium.value == 'marin'
-                ? 'Marin'
-                : 'Eau douce'
+                ? 'type.marin'|trans
+                : 'type.eaudouce'|trans
             %}
 
             <div class="aquarium-ribbon">
@@ -177,7 +177,7 @@
                     class="btn btn-sm btn-outline-info"
                     data-bs-toggle="tooltip"
                     data-bs-placement="top"
-                    title="Modifier cet aquarium">
+                    title="{{ 'modifie.aquarium'|trans }}">
                     <i class="bi bi-pencil-square"></i>
                 </a>
 
@@ -186,7 +186,7 @@
                 class="btn btn-sm btn-outline-warning"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
-                title="Ajouter une analyse">
+                title="{{ 'ajout.test'|trans }}">
                     <i class="bi bi-eyedropper"></i>
                 </a>
 
@@ -194,11 +194,11 @@
                 <form method="post"
                     action="{{ path('app_aquarium_delete', {id: aquarium.id}) }}"
                     style="display:inline-block;"
-                    onsubmit="return confirm('Supprimer cet aquarium ? Cette action est irréversible.');">
+                    onsubmit="return confirm('{{ 'supprime.confirm.aquarium'|trans }}');">
 
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ aquarium.id) }}">
 
-                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer l’aquarium">
+                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'supprime.aquarium'|trans }}">
                         <i class="bi bi-trash"></i>
                     </button>
                 </form>
@@ -215,7 +215,7 @@
 
             <div class="text-center">
                 <i class="bi bi-plus-circle display-4 mb-2"></i>
-                <h5 class="fw-bold">Ajouter un aquarium</h5>
+                <h5 class="fw-bold">{{ 'ajout.aquarium'|trans }}</h5>
             </div>
 
         </div>

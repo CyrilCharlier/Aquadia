@@ -169,4 +169,33 @@ class Test
 
         return $this;
     }
+
+    public function getEventDescription()
+    {
+        $parts = [];
+
+        if (null !== $this->getPh()) {
+            $parts[] = sprintf('pH: %s', $this->getPh());
+        }
+        if (null !== $this->getGh()) {
+            $parts[] = sprintf('GH: %s', $this->getGh());
+        }
+        if (null !== $this->getKh()) {
+            $parts[] = sprintf('KH: %s', $this->getKh());
+        }
+        if (null !== $this->getNo2()) {
+            $parts[] = sprintf('NO2: %s', $this->getNo2());
+        }
+        if (null !== $this->getNo3()) {
+            $parts[] = sprintf('NO3: %s', $this->getNo3());
+        }
+        if (null !== $this->getNhx()) {
+            $parts[] = sprintf('NHx: %s', $this->getNhx());
+        }
+        if (null !== $this->getConductivite()) {
+            $parts[] = sprintf('Cond.: %s', $this->getConductivite());
+        }
+
+        return implode(', ', $parts);
+    }
 }

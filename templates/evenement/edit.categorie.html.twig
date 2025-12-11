@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block page %}
+
+<div class="page-header mb-4">
+    <h1 class="page-header-title text-white">
+        Modifier une categorie d'événement
+    </h1>
+</div>
+<!-- BEGIN card -->
+<div class="card">
+
+    <!-- BEGIN card-body -->
+    <div class="card-body">
+
+        <h4 class="mb-4 fw-bold text-white" id="title_form_categorie_evenement">
+            Modifier une catégorie d'événement
+        </h4>
+
+        {{ form_start(form) }}
+
+        <div class="col-md-3">
+            {{ form_row(form.enable) }}
+        </div>
+
+        <div class="col-md-3">
+            {{ form_row(form.name) }}
+        </div>
+
+        {{ form_end(form) }}
+
+    </div>
+    <!-- END card-body -->
+
+    <div class="card-arrow">
+        <div class="card-arrow-top-left"></div>
+        <div class="card-arrow-top-right"></div>
+        <div class="card-arrow-bottom-left"></div>
+        <div class="card-arrow-bottom-right"></div>
+    </div>
+
+</div>
+<!-- END card -->
+{% endblock %}

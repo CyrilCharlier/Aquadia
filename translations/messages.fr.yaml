@@ -1,0 +1,33 @@
+aquarium:
+    name: 'Nom'
+    volume: 'Volume (L)'
+    wateringdate: 'Mise en eau'
+    temperature: 'Température (°C)'
+    description: 'Description'
+    type: 'Type'
+    phmin: 'pH min'
+    phmax: 'pH max'
+    ghmin: 'Gh min'
+    ghmax: 'Gh max'
+    khmin: 'Gh min'
+    khmax: 'Gh max'
+    no2: 'NO2 max (mg/L)'
+    no3: 'NO3 max (mg/L)'
+    nhx: 'NH3/NH4 max (mg/L)'
+    conductivitemax: 'Conductivité max (µS/cm)'
+
+type:
+    eaudouce: 'Eau douce'
+    marin: 'Marin'
+
+ajout:
+    aquarium: 'Ajouter un aquarium'
+    test: 'Ajouter une analyse'
+
+modifie:
+    aquarium: 'Modifier cet aquarium'
+
+supprime:
+    aquarium: 'Supprimer cet aquarium'
+    confirm:
+        aquarium: 'Supprimer cet aquarium ? Cette action est irréversible.'

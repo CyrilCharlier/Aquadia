@@ -9,7 +9,12 @@ when@dev:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
-                channels: ["!event"]
+                channels: ["!event", "!deprecation"]
+            deprecation:
+                type: stream
+                path: "%kernel.logs_dir%/dev_deprecations.log"
+                level: info
+                channels: [deprecation]
             console:
                 type: console
                 process_psr_3_messages: false

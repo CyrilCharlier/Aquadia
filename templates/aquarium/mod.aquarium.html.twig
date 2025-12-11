@@ -19,44 +19,24 @@
 
                     <div class="row g-4">
 
-                        <!-- Nom -->
                         <div class="col-xl-6">
-                            <label class="form-label text-white-50">Nom <span class="text-danger">*</span></label>
-                            {{ form_widget(aquarium_form.name, {
-                                'attr': { 'class':'form-control', 'placeholder':'Nom aquarium' }
-                            }) }}
+                            {{ form_row(aquarium_form.name) }}
                         </div>
 
-                        <!-- Volume -->
                         <div class="col-xl-6">
-                            <label class="form-label text-white-50">Volume (L) <span class="text-danger">*</span></label>
-                            {{ form_widget(aquarium_form.volume, {
-                                'attr': { 'class':'form-control', 'placeholder':'300' }
-                            }) }}
+                            {{ form_row(aquarium_form.volume) }}
                         </div>
 
-                        <!-- Mise en eau -->
                         <div class="col-xl-6">
-                            <label class="form-label text-white-50">Date de mise en eau</label>
-                            {{ form_widget(aquarium_form.wateringDate, {
-                                'attr': { 'class':'form-control' }
-                            }) }}
+                            {{ form_row(aquarium_form.wateringDate) }}
                         </div>
 
-                        <!-- Température -->
                         <div class="col-xl-6">
-                            <label class="form-label text-white-50">Température (°C)</label>
-                            {{ form_widget(aquarium_form.temperature, {
-                                'attr': { 'class':'form-control', 'placeholder':'25' }
-                            }) }}
+                            {{ form_row(aquarium_form.temperature) }}
                         </div>
 
-                        <!-- Température -->
                         <div class="col-xl-6">
-                            <label class="form-label text-white-50">Type d'Aquarium</label>
-                            {{ form_widget(aquarium_form.typeAquarium, {
-                                'attr': { 'class':'form-select'}
-                            }) }}
+                            {{ form_row(aquarium_form.typeAquarium) }}
                         </div>
 
                         <!-- Image -->
@@ -67,16 +47,8 @@
                             }) }}
                         </div>
 
-                        <!-- Description -->
                         <div class="col-xl-12">
-                            <label class="form-label text-white-50">Description</label>
-                            {{ form_widget(aquarium_form.description, {
-                                'attr': {
-                                    'class':'form-control',
-                                    'rows':3,
-                                    'placeholder':'Notes, observations, biotope...'
-                                }
-                            }) }}
+                            {{ form_row(aquarium_form.description) }}
                         </div>
                     </div>
 
@@ -93,7 +65,7 @@
                                     {{ form_label(aquarium_form.phMin) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-speedometer2"></i></span>
-                                        {{ form_widget(aquarium_form.phMin, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.phMin) }}
                                     </div>
                                     {{ form_errors(aquarium_form.phMin) }}
                                 </div>
@@ -101,7 +73,7 @@
                                     {{ form_label(aquarium_form.phMax) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-speedometer"></i></span>
-                                        {{ form_widget(aquarium_form.phMax, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.phMax) }}
                                     </div>
                                     {{ form_errors(aquarium_form.phMax) }}
                                 </div>
@@ -111,7 +83,7 @@
                                     {{ form_label(aquarium_form.ghMin) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-beaker"></i></span>
-                                        {{ form_widget(aquarium_form.ghMin, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.ghMin) }}
                                     </div>
                                     {{ form_errors(aquarium_form.ghMin) }}
                                 </div>
@@ -119,7 +91,7 @@
                                     {{ form_label(aquarium_form.ghMax) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-beaker"></i></span>
-                                        {{ form_widget(aquarium_form.ghMax, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.ghMax) }}
                                     </div>
                                     {{ form_errors(aquarium_form.ghMax) }}
                                 </div>
@@ -129,7 +101,7 @@
                                     {{ form_label(aquarium_form.khMin) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-moisture"></i></span>
-                                        {{ form_widget(aquarium_form.khMin, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.khMin) }}
                                     </div>
                                     {{ form_errors(aquarium_form.khMin) }}
                                 </div>
@@ -137,7 +109,7 @@
                                     {{ form_label(aquarium_form.khMax) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-moisture"></i></span>
-                                        {{ form_widget(aquarium_form.khMax, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.khMax) }}
                                     </div>
                                     {{ form_errors(aquarium_form.khMax) }}
                                 </div>
@@ -147,7 +119,7 @@
                                     {{ form_label(aquarium_form.no2) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-exclamation-triangle"></i></span>
-                                        {{ form_widget(aquarium_form.no2, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.no2) }}
                                     </div>
                                     {{ form_errors(aquarium_form.no2) }}
                                 </div>
@@ -156,7 +128,7 @@
                                     {{ form_label(aquarium_form.no3) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-exclamation-circle"></i></span>
-                                        {{ form_widget(aquarium_form.no3, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.no3) }}
                                     </div>
                                     {{ form_errors(aquarium_form.no3) }}
                                 </div>
@@ -165,7 +137,7 @@
                                     {{ form_label(aquarium_form.nhx) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-bug"></i></span>
-                                        {{ form_widget(aquarium_form.nhx, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.nhx) }}
                                     </div>
                                     {{ form_errors(aquarium_form.nhx) }}
                                 </div>
@@ -175,7 +147,7 @@
                                     {{ form_label(aquarium_form.conductiviteMax) }}
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-lightning"></i></span>
-                                        {{ form_widget(aquarium_form.conductiviteMax, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_widget(aquarium_form.conductiviteMax) }}
                                     </div>
                                     {{ form_errors(aquarium_form.conductiviteMax) }}
                                 </div>

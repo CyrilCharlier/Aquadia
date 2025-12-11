@@ -1,0 +1,116 @@
+{# templates/evenement_categorie/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block stylesheet %}
+<style>
+  .cat-card {
+    background: rgba(20,35,55,0.65);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #e6f4ff;
+    transition: 0.2s ease;
+  }
+  .cat-card:hover {
+    border-color: #00aaff55;
+    transform: translateY(-2px);
+  }
+
+  .cat-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cat-color-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  }
+
+  .cat-name {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+  }
+
+  .cat-status {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .cat-status.enabled {
+    color: #3CF45A;
+    border-color: rgba(60,244,90,0.5);
+  }
+  .cat-status.disabled {
+    color: #ff6b81;
+    border-color: rgba(255,107,129,0.5);
+    opacity: 0.8;
+  }
+
+  .cat-actions .btn {
+    padding: 4px 8px;
+  }
+</style>
+{% endblock %}
+
+{% block page %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Catégories d’événement</h3>
+  <a href="{{ path('app_evenement_categorie_new') }}" class="btn btn-sm btn-primary">
+    <i class="bi bi-plus-circle me-1"></i> Nouvelle catégorie
+  </a>
+</div>
+
+<div class="row">
+{% for categorie in app.user.evenementCategories %}
+  <div class="col-lg-6 col-xs-12">
+  <div class="cat-card">
+    <div class="cat-main">
+      <div>
+        <div class="cat-name">{{ categorie.name }}</div>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <span class="cat-status {{ categorie.enable ? 'enabled' : 'disabled' }}">
+        {{ categorie.enable ? 'Active' : 'Désactivée' }}
+      </span>
+
+      <div class="cat-actions btn-group">
+        <a href="{{ path('app_evenement_categorie_edit', {id: categorie.id}) }}"
+           class="btn btn-sm btn-outline-info"
+           data-bs-toggle="tooltip"
+           title="Modifier la catégorie">
+          <i class="bi bi-pencil-square"></i>
+        </a>
+
+        <form method="post"
+              action="{{ path('app_evenement_categorie_delete', {id: categorie.id}) }}"
+              onsubmit="return confirm('Supprimer cette catégorie ?');">
+          <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorie.id) }}">
+          <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Supprimer">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+ </div>
+{% else %}
+  <div class="alert alert-info">
+    Aucune catégorie d’événement pour le moment.
+    <a href="{{ path('app_evenement_categorie_new') }}" class="alert-link">Créer une première catégorie</a>.
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

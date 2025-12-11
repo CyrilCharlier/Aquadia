@@ -25,3 +25,5 @@ services:
         tags: ['twig.extension']
     App\Twig\AquariumExtension:
         tags: ['twig.extension']
+    App\Twig\EvenementCategorieExtension:
+        tags: ['twig.extension']
